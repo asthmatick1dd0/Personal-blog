@@ -9,13 +9,27 @@ const Post = require('../models/Post.js')
  */
 
 router.get('', async (req, res) => {
-    const locals = {
+    try {
+        const locals = {
         title: "Blog",
         description: "Welcome to my blog"
-    }
-    try {
-        const data = await Post.find();
-        res.render('index', { locals, data });
+        }
+        let perPage = 10;
+        let page = req.query.page || 1;
+        const data = await Post.aggregate([ { $sort: { createdAt: -1 } } ])
+            .skip(perPage * page - perPage)
+            .limit(perPage);
+        const count = await Post.countDocuments();
+        const nextPage = parseInt(page) + 1;
+        const hasNextPage = nextPage <= Math.ceil(count / perPage);
+
+
+        res.render('index', { 
+            locals, 
+            data, 
+            current: page, 
+            nextPage: hasNextPage ? nextPage : null 
+        });
     } catch (err) {
         console.error(err);
         res.status(500).send("Server Error");
@@ -35,10 +49,28 @@ router.get('', async (req, res) => {
 // insertPostData();
 
 
+/**
+ * GET /
+ * Post : id
+ */
 
-
-
-
+router.get('/post/:id', async (req, res) => {
+    try {
+        const locals = {
+        title: "Blog",
+        description: "Welcome to my blog"
+        }
+        let slug = req.params.id;
+        const post = await Post.findById({ _id: slug });
+        if (!post) {
+            return res.status(404).send("Post not found");
+        }
+        res.render('post', { locals, post });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
+});
 
 
 
