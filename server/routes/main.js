@@ -56,12 +56,13 @@ router.get('', async (req, res) => {
 
 router.get('/post/:id', async (req, res) => {
     try {
-        const locals = {
-        title: "Blog",
-        description: "Welcome to my blog"
-        }
+        
         let slug = req.params.id;
         const post = await Post.findById({ _id: slug });
+        const locals = {
+            title: post.title,
+            description: post.description
+        }
         if (!post) {
             return res.status(404).send("Post not found");
         }
@@ -72,8 +73,31 @@ router.get('/post/:id', async (req, res) => {
     }
 });
 
+/**
+ * POST /
+ * Post - search
+ */
 
-
+router.post('/search', async (req, res) => {
+    try {
+        const locals = {
+            title: "Search",
+            description: req.body.searchTerm
+        }
+        let searchTerm = req.body.searchTerm;
+        const searchNoSpecialChars = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const data = await Post.find({
+            $or: [
+                { title: { $regex: new RegExp(searchNoSpecialChars), $options: 'i' } },
+                { content: { $regex: new RegExp(searchNoSpecialChars), $options: 'i' } }
+            ]
+        });
+        res.render('search', { locals, data });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
+});
 
 
 router.get('/about', (req, res) => {
