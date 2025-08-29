@@ -9,18 +9,14 @@
     <h2 class="article__heading">Latest posts</h2>
 
     <ul class="article-list">
-        <li>
-            <a href="#">
-                <span>Post title</span>
-                <span class="article-list__date">Date</span>
-            </a>
-        </li>
-        <li>
-            <a href="#">
-                <span>Post title</span>
-                <span class="article-list__date">Date</span>
-            </a>
-        </li>
+        <% data.forEach(element => { %>
+            <li>
+                <a href="#">
+                    <span><%= element.title %></span>
+                    <span class="article-list__date"><%= element.createdAt.toLocaleDateString() %></span>
+                </a>
+            </li>
+        <% }) %>
     </ul>
 
     <a href="#" class="pagination">&lt; Previous</a>
