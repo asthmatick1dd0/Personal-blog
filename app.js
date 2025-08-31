@@ -17,12 +17,14 @@ connectDB();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 // Templating engine
 app.use(expressLayout);
 app.set('layout', './layouts/main');
 app.set('view engine', 'ejs');
 
 app.use('/', require('./server/routes/main'));
+app.use('/', require('./server/routes/admin'));
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
