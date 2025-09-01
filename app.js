@@ -15,7 +15,7 @@ app.use(express.static('public'));
 
 // Connect to MongoDB
 connectDB();
-
+    
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

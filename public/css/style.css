@@ -295,11 +295,11 @@ img {
     margin: 0;
 }
 
-.admin-posts-controls form {
+.admin-post-controls form {
     display: inline-block;
 }
 
-.admin-posts-controls .btn {
+.admin-post-controls .btn {
     display: inline-block;
     background-color: var(--black);
     color: var(--gray-light);
