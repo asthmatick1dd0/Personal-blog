@@ -144,7 +144,7 @@ router.get("/edit-post/:_id", authMiddleware, async (req, res) => {
       description: "Edit your post",
     };
     let slug = req.params._id;
-    const post = await Post.findById({ _id: slug });
+    const post = await Post.findOne({ _id: slug });
 
     res.render("admin/edit-post", { locals, post, layout: adminLayout });
   } catch (error) {
@@ -157,16 +157,15 @@ router.get("/edit-post/:_id", authMiddleware, async (req, res) => {
  * POST /dashboard/edit-post
  * Admin - Edit post
  */
-router.post("/edit-post/:_id", authMiddleware, async (req, res) => {
+router.put("/edit-post/:_id", authMiddleware, async (req, res) => {
   try {
-    let slug = req.params._id;
-    const post = await Post.findById({ _id: slug });
     const { title, content } = req.body;
-    post.title = title;
-    post.content = content;
-    post.updatedAt = Date.now();
-    await post.save();
-    res.redirect("/dashboard");
+    await Post.findByIdAndUpdate(req.params._id, {
+      title,
+      content,
+      updatedAt: Date.now(),
+    });
+    res.redirect(`/post/${req.params._id}`);
   } catch (error) {
     console.error("Error updating post:", error);
     res.status(500).send("Internal Server Error");
@@ -177,10 +176,9 @@ router.post("/edit-post/:_id", authMiddleware, async (req, res) => {
  * POST /admin/delete
  * Admin - Delete post
  */
-router.post("/delete-post/:_id", authMiddleware, async (req, res) => {
+router.delete("/delete-post/:_id", authMiddleware, async (req, res) => {
   try {
-    let slug = req.params._id;
-    const post = await Post.findByIdAndDelete({ _id: slug });
+    await Post.deleteOne({ _id: req.params._id });
     res.redirect("/dashboard");
   } catch (error) {
     console.error("Error deleting post:", error);
@@ -191,15 +189,9 @@ router.post("/delete-post/:_id", authMiddleware, async (req, res) => {
  * POST /admin/logout
  * Admin - Logout
  */
-router.post("/logout", authMiddleware, (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Error logging out:", err);
-      return res.status(500).send("Internal Server Error");
-    }
-    res.clearCookie("token");
-    res.redirect("/admin");
-  });
+router.get("/logout", (req, res) => {
+  res.clearCookie("token");
+  res.redirect("/");
 });
 
 /**
