@@ -315,3 +315,19 @@ img {
     justify-content: space-between;
     padding: 10px 0;
 }
+
+/* Dashboard Admin */
+.header__admin-button {
+   display: flex;
+   justify-content: end; 
+   grid-area: button;
+}
+
+
+.header__admin-button button {
+    border: 2px solid var(--gray-light);
+    border-radius: var(--border-radius);
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    height: auto;
+}

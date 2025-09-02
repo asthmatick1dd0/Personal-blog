@@ -174,6 +174,35 @@ router.post("/edit-post/:_id", authMiddleware, async (req, res) => {
 });
 
 /**
+ * POST /admin/delete
+ * Admin - Delete post
+ */
+router.post("/delete-post/:_id", authMiddleware, async (req, res) => {
+  try {
+    let slug = req.params._id;
+    const post = await Post.findByIdAndDelete({ _id: slug });
+    res.redirect("/dashboard");
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+/**
+ * POST /admin/logout
+ * Admin - Logout
+ */
+router.post("/logout", authMiddleware, (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error logging out:", err);
+      return res.status(500).send("Internal Server Error");
+    }
+    res.clearCookie("token");
+    res.redirect("/admin");
+  });
+});
+
+/**
  * POST /admin
  * Admin - Register
  */
