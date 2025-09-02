@@ -1,4 +1,7 @@
 <h1><%= post.title %></h1>
+<% if (post.updatedAt.getTime() > post.createdAt.getTime()) { %>
+    <h4>Updated at: <%= post.updatedAt.toLocaleDateString() %></h4>
+<% } %>
 <article class="article">
     <%= post.content %>
 </article>

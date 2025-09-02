@@ -134,6 +134,46 @@ router.post("/add-post", authMiddleware, async (req, res) => {
 });
 
 /**
+ * GET /dashboard/edit-post
+ * Admin - Edit post
+ */
+router.get("/edit-post/:_id", authMiddleware, async (req, res) => {
+  try {
+    const locals = {
+      title: "Edit post",
+      description: "Edit your post",
+    };
+    let slug = req.params._id;
+    const post = await Post.findById({ _id: slug });
+
+    res.render("admin/edit-post", { locals, post, layout: adminLayout });
+  } catch (error) {
+    console.error("Error getting data for edit post:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+/**
+ * POST /dashboard/edit-post
+ * Admin - Edit post
+ */
+router.post("/edit-post/:_id", authMiddleware, async (req, res) => {
+  try {
+    let slug = req.params._id;
+    const post = await Post.findById({ _id: slug });
+    const { title, content } = req.body;
+    post.title = title;
+    post.content = content;
+    post.updatedAt = Date.now();
+    await post.save();
+    res.redirect("/dashboard");
+  } catch (error) {
+    console.error("Error updating post:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
+/**
  * POST /admin
  * Admin - Register
  */
